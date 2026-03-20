@@ -1,0 +1,494 @@
+/* ==========================================================================
+   GLOBAL LAYOUT & TYPOGRAPHY
+   ========================================================================== */
+body { 
+    font-family: sans-serif; 
+    display: flex; 
+    margin: 0; 
+    padding-top: 25px; /* Alignment buffer for top-level elements */
+    height: calc(100vh - 25px); 
+    background: #f4f4f9; 
+    color: #333; 
+    overflow: hidden; 
+}
+
+#left-panel { 
+    flex: 2; 
+    padding: 0 20px 20px 20px; 
+    display: flex; 
+    flex-direction: column; 
+    border-right: 2px solid #ddd; 
+    height: 100%; 
+    overflow-y: auto; 
+}
+
+#right-panel { 
+    flex: 1.2; 
+    padding: 0 20px 20px 20px; 
+    background: #fff; 
+    overflow-y: auto; 
+    height: 100%; 
+}
+
+h1 { 
+    font-size: 1.5rem; 
+    margin-top: 20px; 
+    color: #0056b3; 
+    border-bottom: 2px solid #0056b3; 
+    padding-bottom: 8px; 
+    margin-bottom: 20px; 
+}
+
+h2 { 
+    font-size: 1.2rem; 
+    margin-top: 20px; 
+    color: #2c3e50; 
+    border-bottom: 2px solid #eee; 
+    padding-bottom: 5px; 
+}
+
+.top-row, .middle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.middle-row { margin-top: 15px; }
+
+.step-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* ==========================================================================
+   LEFT PANEL: INPUTS & OUTPUT
+   ========================================================================== */
+#sampleTextSelect {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 2px solid #333; 
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+#cipherInput { 
+    width: 100%; 
+    height: 150px; 
+    min-height: 150px; 
+    flex-shrink: 0; /* Ensures container dimensions are preserved */
+    margin-bottom: 15px; 
+    padding: 12px; 
+    font-family: monospace; 
+    font-size: 15px; 
+    line-height: 1.5;
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    background-color: #fff; 
+    resize: vertical; 
+    box-sizing: border-box; 
+}
+
+#cipherInput:focus {
+    border-color: #0056b3;
+    outline: none;
+}
+
+#output { 
+    flex: 1; 
+    background: #fdfdfd; 
+    padding: 15px; 
+    white-space: pre-wrap; 
+    font-family: monospace; 
+    font-size: 18px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    line-height: 1.6; 
+}
+
+.solved { color: #d9534f; font-weight: bold; }
+.unsolved { color: #555; opacity: 0.7; }
+
+/* ==========================================================================
+   BUTTONS & UI BADGES
+   ========================================================================== */
+.badge { 
+    padding: 5px 10px; 
+    border-radius: 4px; 
+    font-size: 0.85rem; 
+    font-weight: bold; 
+}
+.badge-gray { background: #e9ecef; color: #6c757d; border: 1px solid #ced4da; }
+.badge-green { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.badge-red { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+.controls { display: flex; gap: 8px; }
+
+button { 
+    padding: 6px 12px; 
+    cursor: pointer; 
+    background: #0056b3; 
+    color: white; 
+    border: none; 
+    border-radius: 4px; 
+    font-weight: bold; 
+}
+.btn-danger { background: #d9534f; }
+.btn-secondary { background: #6c757d; }
+.btn-success { background: #28a745; width: 100%; }
+
+/* ==========================================================================
+   RIGHT PANEL: ANALYSIS CARDS
+   ========================================================================== */
+.tool-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    background: #ffffff;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.tool-card-title {
+    color: #0056b3;
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+}
+
+.tool-card-desc {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 0 0 15px 0;
+}
+
+.tool-section-title {
+    font-size: 1.1rem; 
+    color: #0056b3; 
+    margin: 15px 0 10px 0; 
+    border-bottom: none; 
+    font-weight: bold; 
+}
+
+/* A-Z Substitution Grid */
+#alphabetGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+    gap: 10px;
+}
+
+.grid-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f4f4f4; 
+    padding: 10px 5px 8px 5px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    position: relative;
+}
+
+.grid-box input {
+    width: 28px;
+    height: 28px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #d9534f;
+}
+
+.lock-icon {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+/* N-Gram Pattern Search */
+.ngram-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    text-transform: uppercase;
+    border-color: #0056b3;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 86, 179, 0.2);
+}
+
+/* ==========================================================================
+   DIRECT FREQUENCY MATCHER
+   ========================================================================== */
+.freq-matcher-track { 
+    display: flex; 
+    overflow-x: auto; 
+    gap: 10px; 
+    padding: 12px 5px; /* Alignment for box-shadow visibility */
+}
+
+.freq-pair-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 5px;
+    min-width: 48px; /* Layout stability during re-renders */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
+    transition: all 0.2s ease;
+    cursor: default;
+}
+
+.freq-pair-box:hover {
+    transform: translateY(-3px); /* Dynamic interaction feedback */
+    background: #f0f7ff;
+    border-color: #0056b3;
+    box-shadow: 0 5px 15px rgba(0, 86, 179, 0.1);
+}
+
+.fp-eng-letter { 
+    color: #0056b3; 
+    font-weight: bold; 
+    font-size: 1.2rem; 
+}
+
+.fp-ciph-letter { 
+    color: #d9534f; /* Synchronization with global solved state color */
+    font-weight: bold; 
+    font-size: 1.2rem; 
+}
+
+.fp-stat { 
+    font-size: 0.65rem; 
+    color: #888; 
+    margin-top: -2px; 
+}
+
+.fp-arrow { 
+    color: #ccc; 
+    font-size: 0.9rem; 
+    margin: 4px 0; 
+}
+
+.bar-label { 
+    font-size: 0.7rem; 
+    font-weight: bold; 
+    color: #333; 
+    margin-top: 3px; 
+}
+
+/* ==========================================================================
+   ANALYSIS PROFILERS (VOWELS & ENDINGS)
+   ========================================================================== */
+.blue-header {
+    color: #1c4587;
+    font-weight: bold;
+    font-size: 1.05rem;
+    margin-bottom: 5px;
+}
+
+.profiler-desc {
+    color: #555;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.suspect-data { 
+    font-weight: bold; 
+    color: #8b6314; /* Character suspect thematic color */
+    font-size: 0.95rem; 
+}
+
+/* ==========================================================================
+   MODAL INTERFACE & DIALOGS
+   ========================================================================== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7); 
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.guide-modal-box {
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 800px;
+    text-align: left;
+    max-height: 85vh; 
+    overflow-y: auto;  
+}
+
+.modal-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px; 
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.guide-content h3 {
+    color: #0056b3;
+    margin-top: 25px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 5px; 
+    font-size: 1.2rem;
+}
+
+/* ==========================================================================
+   INTERACTIVE WORD & CHARACTER ALIGNMENT
+   ========================================================================== */
+.interactive-word {
+    display: inline-flex; 
+    margin-right: 8px; 
+    border-bottom: 2px dashed #bbb;
+    transition: all 0.2s ease;
+    vertical-align: baseline;
+}
+
+.interactive-word:hover {
+    background: #d0e4f5;
+    border-bottom: 2px solid #0056b3;
+}
+
+.char-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 14px;
+}
+
+.char-pair .cipher {
+    color: #555; 
+    font-size: 0.95em;
+}
+
+.char-pair .plain.solved {
+    color: #d9534f; /* Matches A-Z manual substitution colors */
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.char-pair .plain.unsolved {
+    color: #ccc; 
+}
+
+/* ==========================================================================
+   COMPONENT HELPERS & GUIDES
+   ========================================================================== */
+.guide-card {
+    background-color: #f0f7ff; 
+    border-left: 4px solid #0056b3; 
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.guide-title {
+    color: #0056b3;
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.guide-list {
+    margin: 0;
+    padding-left: 20px;
+    color: #444;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.guide-list li {
+    margin-bottom: 8px;
+}
+
+.btn-guide-link {
+    display: block;
+    text-align: center;
+    background-color: #5bc0de; 
+    color: white;
+    padding: 10px;
+    margin-top: 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.btn-guide-link:hover {
+    background-color: #46b8da;
+    color: white;
+}
+
+/* ==========================================================================
+   STATE HIGHLIGHTS & SOLUTION MODULES
+   ========================================================================== */
+.ngram-highlight {
+    background-color: #cce5ff !important; 
+    border-bottom: 2px solid #0056b3;
+    border-radius: 3px;
+    color: #333 !important;
+    transition: background-color 0.2s ease;
+}
+
+.ghost-highlight {
+    background-color: #fff3cd; /* Contrast highlighting for active states */
+    border-bottom: 2px solid #ffc107;
+    border-radius: 3px;
+}
+
+.solution-item {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #eee;
+}
+
+.hidden-solution {
+    display: none;
+    margin-top: 10px;
+    font-family: monospace;
+    color: #28a745;
+    font-size: 0.9rem;
+    background: #fff;
+    padding: 10px;
+    border-left: 3px solid #28a745;
+    white-space: normal; 
+    word-break: break-word; 
+}
+
+.btn-tiny {
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    float: right;
+    cursor: pointer;
+}
+
+.solution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; 
+}
+
+.solution-header .btn-tiny {
+    flex-shrink: 0; 
+    margin-left: 10px;
+}

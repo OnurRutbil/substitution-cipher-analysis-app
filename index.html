@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Substitution Cipher Decryption</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<div id="wordModal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="width: 95%; max-width: 650px; text-align: center; padding: 30px;">
+        <h3 style="color: #0056b3; margin-top: 0;">🔍 Smart Pattern Suggestions</h3>
+        <p style="color: #555; margin-bottom: 20px;">Common English words that fit this pattern:</p>
+        
+        <div id="wordSolverGrid" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px; padding: 0 10px;"></div>
+        
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #eee; margin-bottom: 20px; text-align: left;">
+            <div style="font-size: 0.85em; color: #777; font-weight: bold; margin-bottom: 10px;">💡 Suggested Matches (Click to fill):</div>
+            <div id="smartSuggestions" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+        </div>
+        
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="closeWordModal()" class="btn-secondary">Cancel</button>
+            <button onclick="applyWordModal()" class="btn-success" style="width: auto;">Apply Mapping</button>
+        </div>
+    </div>
+</div>
+
+<div id="left-panel">
+    <h1>General Substitution Cipher Decryption</h1>
+    
+    <div class="top-row">
+        <span class="step-title">1. Paste Ciphertext</span>
+        <select id="sampleTextSelect" onchange="loadSampleText()">
+            <option value="alkindi">Al-Kindi's Manuscript (9th Century)</option>
+            <option value="sherlock">Sherlock Holmes Quote</option>
+            <option value="goldbug">Poe's 'The Gold-Bug'</option>
+            <option value="turing">Alan Turing Quote</option>
+            <option value="zimmermann">Zimmermann Telegram</option>
+            <option value="custom">-- Custom Text --</option>
+        </select>
+    </div>
+    
+    <textarea id="cipherInput" placeholder="Paste ciphertext..." oninput="originalText = this.value.toUpperCase(); updateAll();"></textarea>
+    
+    <div class="middle-row">
+        <span class="step-title">2. Live Decryption Output</span>
+        <div id="qualityBadge" class="badge badge-gray">Text Quality: Waiting for mappings...</div>
+        <div class="controls">
+            <button onclick="undo()" class="btn-secondary">↺ Undo</button>
+            <button onclick="resetMapping()" class="btn-danger">Reset All</button>
+        </div>
+    </div>
+    
+    <div id="output"></div>
+</div>
+
+<div id="right-panel">
+
+    <div class="guide-card">
+        <h3 class="guide-title">📖 Quick Start Guide</h3>
+        <ol class="guide-list">
+            <li><strong>Load or Paste:</strong> Pick a famous cipher from the dropdown or paste your own ciphertext to begin.</li>
+            <li><strong>Frequency Check:</strong> Check "Visual Frequencies" (Arrows) to see which letters appear most—these are likely 'e', 't', or 'a'.</li>
+            <li><strong>Find Patterns:</strong> Use the <strong>Isomorphs</strong> and <strong>Three-Letter Word</strong> tools to identify common words like 'the' or 'that'.</li>
+            <li><strong>Smart Suggestions:</strong> Click any word in the Live Output to see common lowercase English words that fit that exact pattern.</li>
+        </ol>
+        <a href="javascript:void(0)" onclick="openGuide()" class="btn-guide-link">📖 Read Detailed Beginner's Guide</a>
+    </div>
+
+    <h2>Analysis Tools (Rules of Thumb)</h2>
+    
+    <div class="tool-card">
+        <h3 class="tool-card-title">A-Z Mapping Grid (Hover & Lock)</h3>
+        <p class="tool-card-desc">Guess single letters directly. Hover to highlight. Click 🔒 to freeze a mapping.</p>
+        <div id="alphabetGrid" class="tool-section"></div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">"N-Gram" Custom Search</h3>
+        <p class="tool-card-desc">Type any raw cipher sequence (e.g. XYZZ) to highlight it in blue in the text.</p>
+        <input type="text" id="ngramInput" class="ngram-input" placeholder="TYPE CIPHER SEQUENCE..." oninput="updateNGramSearch(this.value)">
+    </div>
+    
+    <div class="tool-card">
+        <h3 class="tool-card-title">Visual Frequencies & Endings</h3>
+        <p class="tool-card-desc">Standard English frequencies (top) paired with your Ciphertext frequencies (bottom).</p>
+        <div id="frequencyMatcher" class="freq-matcher-track"></div>
+        <p class="blue-header" style="margin-top: 20px;">Top Endings: <span id="dynamicTopEndings">Scanning...</span></p>
+        <p class="profiler-desc">Most common endings in English: e, s, t, d, n.</p>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">Vowel vs. Consonant Profiler</h3>
+        <p class="tool-card-desc">Letters that touch the highest variety of other letters are usually vowels (a, e, i, o, u).</p>
+        <div id="vowelSuspects" class="suspect-data">Scanning...</div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">Contraction Decoder</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="contractionSelect" onchange="updateContractionTargets()"><option value="-">-</option></select> = 
+            <select id="contractionTarget"><option value="-">- Select cipher -</option></select>
+            <button onclick="applyContraction()">Set</button>
+        </div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">Isomorphs (Pattern Words)</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="isomorphSelect" onchange="updateIsomorphTargets(); setGhostWord(this.value);"><option value="-">-</option></select> = 
+            <select id="isomorphTarget"><option value="-">- Select cipher -</option></select>
+            <button onclick="applyIsomorph()" class="btn-primary">Set</button>
+        </div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">Frequent Pairs (General Digrams)</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="pairSelect" onchange="updatePairTargets(); setGhostWord(this.value);"><option value="-">-</option></select> = 
+            <select id="pairTarget"><option value="-">- Select cipher -</option></select>
+            <button onclick="applyPair()" class="btn-primary">Set</button>
+        </div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">One-Letter Words (Monograms)</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="monoSelect" onchange="updateMonoTargets()"><option value="-">-</option></select> = 
+            <select id="monoTarget"><option value="-">- Select cipher -</option></select>
+            <button onclick="applyMono()" class="btn-primary">Set</button>
+        </div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">Two-Letter Words (Standalone Digrams)</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="twoWordSelect" onchange="updateTwoWordTargets(); setGhostWord(this.value);"><option value="-">-</option></select> = 
+            <select id="twoWordTarget"><option value="-">- Select cipher -</option></select>
+            <button onclick="applyTwoWords()" class="btn-primary">Set</button>
+        </div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">Three-Letter Words (Standalone Trigrams)</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="threeWordSelect" onchange="updateThreeWordTargets(); setGhostWord(this.value);"><option value="-">-</option></select> = 
+            <select id="threeWordTarget"><option value="-">- Select cipher -</option></select>
+            <button onclick="applyThreeWords()" class="btn-primary">Set</button>
+        </div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">Word Suffixes (3-Letters)</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="suffixSelect" onchange="updateSuffixTargets(); setGhostWord(this.value);"><option value="-">-</option></select> = 
+            <select id="suffixTarget"><option value="-">- Select cipher -</option></select>
+            <button onclick="applySuffix()" class="btn-primary">Set</button>
+        </div>
+    </div>
+
+    <div class="tool-card">
+        <h3 class="tool-card-title">Double Letters</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="doubleSelect" onchange="updateDoubleTargets(); setGhostWord(this.value);"><option value="-">-</option></select> = 
+            <select id="doubleTarget"><option value="-">- Select cipher -</option></select>
+            <button onclick="applyDouble()" class="btn-primary">Set</button>
+        </div>
+    </div>
+</div>
+
+<div id="guideModal" class="modal-overlay" style="display: none;">
+    <div class="modal-box guide-modal-box">
+        <h2>📖 Beginner's Guide to Cryptanalysis</h2>
+        <div class="guide-content">
+            <h3>1. About This App</h3>
+            <p>This is an interactive lab for <strong>General Substitution Ciphers</strong>. Guesses are applied instantly across the entire text while warning you of conflicts.</p>
+
+            <h3>2. What is a Substitution Cipher?</h3>
+            <p>Each letter is replaced by another consistent letter. If 'A' becomes 'q', it stays 'q' throughout the text.</p>
+
+            <h3>3. Features & Analysis Tools</h3>
+            <ul>
+                <li><strong>A-Z Mapping Grid:</strong> Core tool for manual guesses. Click 🔒 to freeze a mapping.</li>
+                <li><strong>Smart Word Suggestions:</strong> Click any word in the output to see lowercase English words (like 'that' or 'there') matching the pattern.</li>
+                <li><strong>Visual Frequencies (Arrows):</strong> Compare English 'e', 't', 'a' to your cipher's high-frequency letters.</li>
+                <li><strong>Vowel Profiler:</strong> Letters touching many neighbors are likely 'a', 'e', 'i', 'o', or 'u'.</li>
+            </ul>
+
+            <h3>4. Sample Text Solutions</h3>
+            <div class="solution-container">
+                <div class="solution-item">
+                    <div class="solution-header"><span>Al-Kindi's Manuscript</span><button onclick="toggleSolution('sol1')" class="btn-tiny">Show/Hide</button></div>
+                    <p id="sol1" class="hidden-solution">the way to solve an encrypted message, if we know its language, is to find a different plaintext of the same language long enough to fill one sheet or so, and then we count the occurrences of each letter. we call the most frequently occurring letter the 'first', the next most occurring letter the 'second' the following most occurring letter the 'third', and so on, until we account for all the different letters in the plaintext sample. then we look at the cipher text we want to solve and we also classify its symbols. we find the most occurring symbol and change it to the form of the 'first' letter of the plaintext sample, the next most common symbol is changed to the form of the 'second' letter, and the following most common symbol is changed to the form of the 'third' letter, and so on, until we account for all symbols of the cryptogram we want to solve.</p>
+                </div>
+                <div class="solution-item">
+                    <div class="solution-header"><span>Sherlock Holmes Quote</span><button onclick="toggleSolution('sol2')" class="btn-tiny">Show/Hide</button></div>
+                    <p id="sol2" class="hidden-solution">it is a capital mistake to theorize before one has data. insensibly one begins to twist facts to suit theories, instead of theories to suit facts.</p>
+                </div>
+                <div class="solution-item">
+                    <div class="solution-header"><span>Poe's 'The Gold-Bug'</span><button onclick="toggleSolution('sol3')" class="btn-tiny">Show/Hide</button></div>
+                    <p id="sol3" class="hidden-solution">a good glass in the bishop's hostel in the devil's seat forty one degrees and thirteen minutes northeast and by north main branch seventh limb east side shoot from the left eye of the death's head.</p>
+                </div>
+                <div class="solution-item">
+                    <div class="solution-header"><span>Alan Turing Quote</span><button onclick="toggleSolution('sol4')" class="btn-tiny">Show/Hide</button></div>
+                    <p id="sol4" class="hidden-solution">we can only see a short distance ahead, but we can see plenty there that needs to be done.</p>
+                </div>
+                <div class="solution-item">
+                    <div class="solution-header"><span>Zimmermann Telegram</span><button onclick="toggleSolution('sol5')" class="btn-tiny">Show/Hide</button></div>
+                    <p id="sol5" class="hidden-solution">we intend to begin on the first of february unrestricted submarine warfare. we make mexico a proposal of alliance on the following basis: make war together, make peace together, generous financial support and an understanding on our part that mexico is to reconquer the lost territory in texas, new mexico, and arizona.</p>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="closeGuide()" class="btn-secondary">Close Guide</button>
+        </div>
+    </div>
+</div>
+
+<script src="static/js/main.js"></script>
+</body>
+</html>
