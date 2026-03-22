@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>General Substitution Cipher Decryption</title>
     <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css">
 </head>
 <body>
 
@@ -42,12 +43,21 @@
         </select>
     </div>
     
-    <textarea id="cipherInput" placeholder="Paste ciphertext..." oninput="originalText = this.value.toUpperCase(); updateAll();"></textarea>
+    <textarea id="cipherInput" 
+              data-step="1"
+              data-title="Step 1: The Cipher" 
+              data-intro="Paste your secret message here, or pick a famous historical cipher from the dropdown menu above!" 
+              placeholder="Paste ciphertext..." 
+              oninput="originalText = this.value.toUpperCase(); updateAll();"></textarea>
     
-    <div class="middle-row">
+    <div class="middle-row"
+         data-step="2"
+         data-title="Step 2: Smart Word Solver" 
+         data-intro="Watch your cipher decrypt in real-time here. HUGE TIP: Click on ANY word in this output area to open the Smart Pattern Solver and see English words that match it!">
         <span class="step-title">2. Live Decryption Output</span>
         <div id="qualityBadge" class="badge badge-gray">Text Quality: Waiting for mappings...</div>
         <div class="controls">
+            <button onclick="introJs().start()" class="tutorial-pulse" style="background-color: #17a2b8; color: white; font-weight: bold; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">💡 Start Tutorial</button>
             <button onclick="undo()" class="btn-secondary">↺ Undo</button>
             <button onclick="resetMapping()" class="btn-danger">Reset All</button>
         </div>
@@ -71,19 +81,28 @@
 
     <h2>Analysis Tools (Rules of Thumb)</h2>
     
-    <div class="tool-card">
+    <div class="tool-card"
+         data-step="3"
+         data-title="Step 3: Manual Guesses" 
+         data-intro="When you figure out a letter, type it here. Click the lock icon 🔒 if you are 100% sure about it so you don't accidentally overwrite it later.">
         <h3 class="tool-card-title">A-Z Mapping Grid (Hover & Lock)</h3>
         <p class="tool-card-desc">Guess single letters directly. Hover to highlight. Click 🔒 to freeze a mapping.</p>
         <div id="alphabetGrid" class="tool-section"></div>
     </div>
 
-    <div class="tool-card">
+    <div class="tool-card"
+         data-step="4"
+         data-title="Step 4: N-Gram Search" 
+         data-intro="Notice a repeating chunk of cipher letters? Type them in here to instantly highlight every instance of that sequence in blue over in your live text.">
         <h3 class="tool-card-title">"N-Gram" Custom Search</h3>
         <p class="tool-card-desc">Type any raw cipher sequence (e.g. XYZZ) to highlight it in blue in the text.</p>
         <input type="text" id="ngramInput" class="ngram-input" placeholder="TYPE CIPHER SEQUENCE..." oninput="updateNGramSearch(this.value)">
     </div>
     
-    <div class="tool-card">
+    <div class="tool-card"
+         data-step="5"
+         data-title="Step 5: Follow the Data" 
+         data-intro="In English, 'e', 't', and 'a' are the most common letters. Look at your cipher's highest frequencies at the bottom and try mapping them to 'e', 't', or 'a'!">
         <h3 class="tool-card-title">Visual Frequencies & Endings</h3>
         <p class="tool-card-desc">Standard English frequencies (top) paired with your Ciphertext frequencies (bottom).</p>
         <div id="frequencyMatcher" class="freq-matcher-track"></div>
@@ -91,7 +110,10 @@
         <p class="profiler-desc">Most common endings in English: e, s, t, d, n.</p>
     </div>
 
-    <div class="tool-card">
+    <div class="tool-card"
+         data-step="6"
+         data-title="Step 6: Vowel Profiler" 
+         data-intro="Vowels usually touch a lot of different consonants. The letters listed here have the highest number of unique neighbors, making them highly suspicious vowels!">
         <h3 class="tool-card-title">Vowel vs. Consonant Profiler</h3>
         <p class="tool-card-desc">Letters that touch the highest variety of other letters are usually vowels (a, e, i, o, u).</p>
         <div id="vowelSuspects" class="suspect-data">Scanning...</div>
@@ -106,7 +128,10 @@
         </div>
     </div>
 
-    <div class="tool-card">
+    <div class="tool-card"
+         data-step="7"
+         data-title="Step 7: Pattern Dropdowns" 
+         data-intro="These dropdowns scan your text for specific patterns (like doubles or 3-letter words). Select a cipher pattern, pick its English match, and click 'Set' to map the whole word at once!">
         <h3 class="tool-card-title">Isomorphs (Pattern Words)</h3>
         <div style="display: flex; gap: 10px; align-items: center;">
             <select id="isomorphSelect" onchange="updateIsomorphTargets(); setGhostWord(this.value);"><option value="-">-</option></select> = 
@@ -218,6 +243,7 @@
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
 <script src="static/js/main.js"></script>
 </body>
 </html>
